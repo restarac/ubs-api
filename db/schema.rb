@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_07_232328) do
+ActiveRecord::Schema.define(version: 2018_06_08_020818) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "street"
@@ -39,7 +39,9 @@ ActiveRecord::Schema.define(version: 2018_06_07_232328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_ubs_on_address_id"
+    t.index ["cnes_code"], name: "index_ubs_on_cnes_code", unique: true
     t.index ["score_id"], name: "index_ubs_on_score_id"
+    t.index [nil, nil], name: "index_ubs_on_street_and_city"
   end
 
 end
