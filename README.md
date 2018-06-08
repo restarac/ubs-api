@@ -1,24 +1,17 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Importação das UBS
 
-Things you may want to cover:
+Para a importação da base de dados é necessário existir um arquivo no diretorio `db/ubs.csv`.
 
-* Ruby version
+Execute a rake(é importado em modo append):
 
-* System dependencies
+```
+$ rake import:ubs
+```
 
-* Configuration
+No modo Append, apenas serão incluidas as novas unidades. Atualizações de valores de unidades já existentes não serão feitas.
 
-* Database creation
+No console(e mo log quando em `development`) serão exibidos todos os casos de sucesso e falha.
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+OBS: Um caso normal de erro frequente é a violação da chave unica do CNES.
