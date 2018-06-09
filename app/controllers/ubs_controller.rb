@@ -1,0 +1,2 @@
+class UbsController < ApplicationController
+end
