@@ -11,7 +11,6 @@ class UbsListRepresenter < Roar::Decorator
   collection :entries, decorator: UbsRepresenter
 end
 
-
 # {  
 #   current_page:1,
 #   per_page:1,
