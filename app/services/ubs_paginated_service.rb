@@ -81,7 +81,7 @@ class UbsPaginatedService
         #{EARTH_RADIUS_IN_KM} * 2 * ASIN(SQRT(POWER(SIN((#{latitude} - ubs.latitude) * pi()/180 / 2), 2) + COS(#{latitude} * pi()/180) * COS(ubs.latitude * pi()/180) * POWER(SIN((#{longitude} - ubs.longitude) * pi()/180 / 2), 2) ))  AS distance
         FROM ubs
         WHERE ubs.latitude BETWEEN #{lat1} AND #{lat2} AND ubs.longitude BETWEEN #{long1} AND #{long2}
-        HAVING distance < #{PROXIMITY_DISTANCE_IN_KILOMETERS}
+        HAVING distance < #{dist}
         ORDER BY distance
       SQL
     end
