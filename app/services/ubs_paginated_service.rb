@@ -7,18 +7,15 @@ class UbsPaginatedService
     @per_page = per_page || DEFAULT_PER_PAGE
   end
 
-  def find_by_query_or_default(query: query)
-    if query.blank?
-      # default search when there is no query
-      presenter = UbsPaginatedService.new.all()
-    else
-      latitude, longitude = query.split(",")
+  def find_by_query_or_default(query)
+    return all if query.blank?
 
-      UbsPaginatedService.new.by_geo_proximity(
-        latitude: latitude,
-        longitude: longitude
-      )
-    end
+    latitude, longitude = query.split(",")
+    byebug
+    by_geo_proximity(
+      latitude: latitude,
+      longitude: longitude
+    )
   end
 
   def all
@@ -55,7 +52,7 @@ class UbsPaginatedService
   end
 
   class GeoProximityMYSQL
-    PROXIMITY_DISTANCE_IN_KILOMETERS = 10
+    PROXIMITY_DISTANCE_IN_KILOMETERS = 100
 
     attr_reader :latitude, :longitude
 
@@ -70,10 +67,10 @@ class UbsPaginatedService
       dist = PROXIMITY_DISTANCE_IN_KILOMETERS
 
       # with that i can calculate the boundary, this will speedup the query
-      long1 = (longitude – dist) / (cosine(latitude) * 111.04).abs
+      long1 = (longitude - dist) / (cosine(latitude) * 111.04).abs
       long2 = longitude + dist / (cosine(latitude) * 111.04).abs
 
-      lat1 = latitude – dist / (111.04)
+      lat1 = latitude - dist / (111.04)
       lat2 = latitude + dist / (111.04)
       
       <<-SQL
@@ -82,7 +79,7 @@ class UbsPaginatedService
         FROM ubs
         WHERE ubs.latitude BETWEEN #{lat1} AND #{lat2} AND ubs.longitude BETWEEN #{long1} AND #{long2}
         HAVING distance < #{PROXIMITY_DISTANCE_IN_KILOMETERS}
-        ORDER BY distance;
+        ORDER BY distance
       SQL
     end
 

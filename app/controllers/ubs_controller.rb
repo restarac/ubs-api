@@ -3,17 +3,9 @@ class UbsController < ApplicationController
     page = params["page"]
     per_page = params["per_page"]
     query = params["query"]
+    service = UbsPaginatedService.new(current_page: page, per_page: per_page)
 
-    if query
-      latitude, longitude = query.split(",")
-
-      UbsPaginatedService.new.by_geo_proximity(
-        latitude: latitude,
-        longitude: longitude
-      )
-    else
-      presenter = UbsPaginatedService.new.all()
-    end
+    presenter = service.find_by_query_or_default(query)
     
     representer = UbsListRepresenter.new(presenter)
 
