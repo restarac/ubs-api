@@ -31,9 +31,9 @@ RSpec.describe 'ubs API', type: :request do
 
   context 'with a specific point in 10 meter of radius' do
     describe 'GET /ubs?query=-23.60,-46.69' do
-      let!(:ubs_nexting) { create :ubs, latitude: -23.62, longitude: -46.63 }
+      let!(:ubs_nexting) { create :ubs, latitude: -23.604936, longitude: -46.692999  }
       
-      before { get '/ubs?query=-23.60,-46.69' }
+      before { get '/ubs?query=-23.604936,-46.692999' }
       
       it 'returns the total entries' do
         json = JSON.parse(response.body)

@@ -11,7 +11,7 @@ class UbsPaginatedService
     return all if query.blank?
 
     latitude, longitude = query.split(",")
-    byebug
+
     by_geo_proximity(
       latitude: latitude,
       longitude: longitude
@@ -52,30 +52,32 @@ class UbsPaginatedService
   end
 
   class GeoProximityMYSQL
-    PROXIMITY_DISTANCE_IN_KILOMETERS = 100
+    PROXIMITY_DISTANCE_IN_KILOMETERS = 10
+    ONE_DEGREE_IN_KILOMETERS = 111.04
 
     attr_reader :latitude, :longitude
 
     def initialize(latitude:, longitude:)
       @latitude = latitude.to_f
-      @longitude = latitude.to_f
+      @longitude = longitude.to_f
     end
 
     def to_sql
       # 1 degree of latitude ~= 111.04 Kms
       # 1 degree of longitude ~= cos(latitude) * 111.04 Kms
       dist = PROXIMITY_DISTANCE_IN_KILOMETERS
+      km = ONE_DEGREE_IN_KILOMETERS
 
-      # with that i can calculate the boundary, this will speedup the query
-      long1 = (longitude - dist) / (cosine(latitude) * 111.04).abs
-      long2 = longitude + dist / (cosine(latitude) * 111.04).abs
+      # with that i can calculate the square boundary, this will speedup the query
+      long1 = longitude - (dist / (cosine(latitude) * km).abs)
+      long2 = longitude + (dist / (cosine(latitude) * km).abs)
 
-      lat1 = latitude - dist / (111.04)
-      lat2 = latitude + dist / (111.04)
-      
+      lat1 = latitude - (dist / km)
+      lat2 = latitude + (dist / km)
+      byebug
       <<-SQL
-        SELECT id, name,
-        6371 * 2 * ASIN(SQRT(POWER(SIN(RADIANS(#{latitude} - ABS(ubs.latitude))), 2) + COS(RADIANS(#{latitude})) * COS(RADIANS(ABS(ubs.latitude))) * POWER(SIN(RADIANS(#{longitude} - ubs.longitude)), 2))) AS distance
+        SELECT ubs.*,
+        6371 * 2 * ASIN(SQRT(POWER(SIN((#{latitude} - ubs.latitude) * pi()/180 / 2), 2) + COS(#{latitude} * pi()/180) * COS(ubs.latitude * pi()/180) * POWER(SIN((#{longitude} - ubs.longitude) * pi()/180 / 2), 2) ))  AS distance
         FROM ubs
         WHERE ubs.latitude BETWEEN #{lat1} AND #{lat2} AND ubs.longitude BETWEEN #{long1} AND #{long2}
         HAVING distance < #{PROXIMITY_DISTANCE_IN_KILOMETERS}
@@ -86,7 +88,7 @@ class UbsPaginatedService
     private
 
     def to_radians(degrees)
-      degrees * Math::PI / 180 
+      degrees * Math::PI / 180
     end
 
     def cosine(degrees)

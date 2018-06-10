@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2018_06_09_180818) do
 
-  create_table "addresses", force: :cascade do |t|
+  create_table "addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "street"
     t.string "city"
     t.datetime "created_at", null: false
@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2018_06_09_180818) do
     t.index ["street", "city"], name: "index_addresses_on_street_and_city"
   end
 
-  create_table "scores", force: :cascade do |t|
+  create_table "scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "size"
     t.integer "adaptation_for_seniors"
     t.integer "medical_equipment"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2018_06_09_180818) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "ubs", force: :cascade do |t|
+  create_table "ubs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.float "latitude"
     t.float "longitude"
     t.integer "cnes_code"
