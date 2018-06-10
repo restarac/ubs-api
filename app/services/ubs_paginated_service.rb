@@ -54,6 +54,7 @@ class UbsPaginatedService
   class GeoProximityMYSQL
     PROXIMITY_DISTANCE_IN_KILOMETERS = 10
     ONE_DEGREE_IN_KILOMETERS = 111.04
+    EARTH_RADIUS_IN_KM = 6371
 
     attr_reader :latitude, :longitude
 
@@ -74,10 +75,10 @@ class UbsPaginatedService
 
       lat1 = latitude - (dist / km)
       lat2 = latitude + (dist / km)
-      byebug
+
       <<-SQL
         SELECT ubs.*,
-        6371 * 2 * ASIN(SQRT(POWER(SIN((#{latitude} - ubs.latitude) * pi()/180 / 2), 2) + COS(#{latitude} * pi()/180) * COS(ubs.latitude * pi()/180) * POWER(SIN((#{longitude} - ubs.longitude) * pi()/180 / 2), 2) ))  AS distance
+        #{EARTH_RADIUS_IN_KM} * 2 * ASIN(SQRT(POWER(SIN((#{latitude} - ubs.latitude) * pi()/180 / 2), 2) + COS(#{latitude} * pi()/180) * COS(ubs.latitude * pi()/180) * POWER(SIN((#{longitude} - ubs.longitude) * pi()/180 / 2), 2) ))  AS distance
         FROM ubs
         WHERE ubs.latitude BETWEEN #{lat1} AND #{lat2} AND ubs.longitude BETWEEN #{long1} AND #{long2}
         HAVING distance < #{PROXIMITY_DISTANCE_IN_KILOMETERS}
