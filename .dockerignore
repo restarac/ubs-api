@@ -1,0 +1,11 @@
+.git*
+tmp*
+log*
+spec*
+vendor/bundle*
+.bundle*
+*Dockerfile
+.env*
+docker-compose.yml
+.git
+log

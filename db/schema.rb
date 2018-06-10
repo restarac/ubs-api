@@ -10,16 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_08_020818) do
+ActiveRecord::Schema.define(version: 2018_06_09_180818) do
 
-  create_table "addresses", force: :cascade do |t|
+  create_table "addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "street"
     t.string "city"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["street", "city"], name: "index_addresses_on_street_and_city"
   end
 
-  create_table "scores", force: :cascade do |t|
+  create_table "scores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "size"
     t.integer "adaptation_for_seniors"
     t.integer "medical_equipment"
@@ -28,7 +29,7 @@ ActiveRecord::Schema.define(version: 2018_06_08_020818) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "ubs", force: :cascade do |t|
+  create_table "ubs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.float "latitude"
     t.float "longitude"
     t.integer "cnes_code"
@@ -40,8 +41,8 @@ ActiveRecord::Schema.define(version: 2018_06_08_020818) do
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_ubs_on_address_id"
     t.index ["cnes_code"], name: "index_ubs_on_cnes_code", unique: true
+    t.index ["latitude", "longitude"], name: "index_ubs_on_latiTude_and_longitude"
     t.index ["score_id"], name: "index_ubs_on_score_id"
-    t.index [nil, nil], name: "index_ubs_on_street_and_city"
   end
 
 end
